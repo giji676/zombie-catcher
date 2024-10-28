@@ -45,21 +45,23 @@ public class ZombieCatcher {
   }
 
   public static boolean overlappingDayAndNightPeriods(int t0, int t1, int t2, int t3) {
-    
+    if (t0 >= 7 && t1 <= 6) {
+      t1 += 24;
+    } else if (t0 < t2 && t3 < t2) {
+      t0 += 24;
+      t1 += 24;
+    }
+    if (t1 < t0) {
+      t1 += 24;
+    }
+    if (t3 < t2) {
+      t3 += 24;
+    }
     System.out.println(t0 + " " + t1 + " " + t2 + " " + t3);
     return overlappingPeriods(t0, t1, t2, t3);
   }
 
   public static void main(String[] args) {
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 22, 2)); // true
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 23, 2)); // true
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 23, 1)); // true
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 23, 3)); // true
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 21, 23)); // true
-    System.out.println(overlappingDayAndNightPeriods(22, 2, 21, 22)); // false
-    
-    System.out.println(overlappingDayAndNightPeriods(1, 2, 23, 2)); // true
-    System.exit(0);
     Scanner scanner_obj = new Scanner(System.in);
 
     System.out.println("Enter the start time:");
