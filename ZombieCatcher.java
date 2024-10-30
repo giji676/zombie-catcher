@@ -3,6 +3,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ZombieCatcher {
+  // Ask the user to input num of visitors and their times,
+  // Check whichone needs to be quarantined
   public static int getVisitors(int t0, int t1) {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Enter the number of visitors:");
@@ -35,6 +37,8 @@ public class ZombieCatcher {
     return quarantine_count;
   }
 
+  // Check if two time periods overlap
+  // Only for one day
   public static boolean overlappingPeriods(int t0, int t1, int t2, int t3) {
     if (t0 <= t2 && t2 < t1) {
       return true;
@@ -45,6 +49,8 @@ public class ZombieCatcher {
     }
   }
 
+  // Check if two time periods overlap
+  // Allows for time period to run into the next day
   public static boolean overlappingDayAndNightPeriods(int t0, int t1, int t2,
                                                       int t3) {
     if (t0 >= 7 && t1 <= 6) {
@@ -63,10 +69,13 @@ public class ZombieCatcher {
   }
 
   public static void main(String[] args) {
+    // If files are specified get the visitors data from the files
+    // Otherwise get it from user's input
     boolean files_given = false;
     if (args.length > 0) {
       files_given = true;
     }
+    // Check if the files exist
     for (int i = 0; i < args.length; i++) {
       File file = new File(args[i]);
 
@@ -78,6 +87,7 @@ public class ZombieCatcher {
 
     Scanner scanner = new Scanner(System.in);
 
+    // Getting the zombies start and end time
     System.out.println("Enter the start time:");
     int t0 = scanner.nextInt();
     scanner.nextLine();
@@ -93,8 +103,12 @@ public class ZombieCatcher {
           try {
             File myObj = new File(args[i]);
             Scanner myReader = new Scanner(myObj);
+
             while (myReader.hasNextLine()) {
               String data = myReader.nextLine();
+              // Proper data should provide the data in the following data
+              // <name> <start_time> <end_time>
+              // Eg Balaji 18 19
               String[] vals = data.split(" ");
               boolean overlaps = overlappingDayAndNightPeriods(t0, t1, Integer.parseInt(vals[1]), Integer.parseInt(vals[2]));
               potential_zombies += overlaps ? 1 : 0;
