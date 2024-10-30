@@ -160,7 +160,7 @@ public class ZombieCatcher {
 
             while (myReader.hasNextLine()) {
               String data = myReader.nextLine();
-              // Proper data should provide the data in the following data
+              // Expect data in the following data
               // <name> <start_time> <end_time>
               // Eg Balaji 18 19
 
@@ -168,14 +168,14 @@ public class ZombieCatcher {
               // If data cannot be extracted properly mark it as not valid
               Visitor visitor = validateFileLine(data);
 
-              if (!visitor.isValidData()) {
-                System.out.println(args[i] + " contians invalid input");
-              } else {
+              if (visitor.isValidData()) {
                 boolean overlaps = overlappingDayAndNightPeriods(t0, t1, visitor.getT0(), visitor.getT1());
                 potential_zombies += overlaps ? 1 : 0;
                 if (overlaps) {
                   System.out.println(visitor.getName() + " needs to be quarantined.");
                 }
+              } else {
+                System.out.println(args[i] + " contians invalid input");
               }
             }
             myReader.close();
