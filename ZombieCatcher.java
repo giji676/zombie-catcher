@@ -1,25 +1,26 @@
-import java.util.Scanner; 
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class ZombieCatcher {
   public static int getVisitors(int t0, int t1) {
-    Scanner scanner_obj = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
     System.out.println("Enter the number of visitors:");
-    int visitor_num = scanner_obj.nextInt();
-    scanner_obj.nextLine();
+    int visitor_num = scanner.nextInt();
+    scanner.nextLine();
     int quarantine_count = 0;
 
     for (int i = 0; i < visitor_num; i++) {
       System.out.println("Enter the visitor's name:");
-      String name = scanner_obj.nextLine();
+      String name = scanner.nextLine();
 
       System.out.println("Enter the arrival time:");
-      int arival_t = scanner_obj.nextInt();
-      scanner_obj.nextLine();
+      int arival_t = scanner.nextInt();
+      scanner.nextLine();
 
       System.out.println("Enter the departure time:");
-      int departure_t = scanner_obj.nextInt();
-      scanner_obj.nextLine();
+      int departure_t = scanner.nextInt();
+      scanner.nextLine();
 
       boolean overlaps = overlappingPeriods(t0, t1, arival_t, departure_t);
       if (overlaps) {
@@ -44,7 +45,8 @@ public class ZombieCatcher {
     }
   }
 
-  public static boolean overlappingDayAndNightPeriods(int t0, int t1, int t2, int t3) {
+  public static boolean overlappingDayAndNightPeriods(int t0, int t1, int t2,
+                                                      int t3) {
     if (t0 >= 7 && t1 <= 6) {
       t1 += 24;
     } else if (t0 < t2 && t3 < t2) {
@@ -57,22 +59,60 @@ public class ZombieCatcher {
     if (t3 < t2) {
       t3 += 24;
     }
-    System.out.println(t0 + " " + t1 + " " + t2 + " " + t3);
     return overlappingPeriods(t0, t1, t2, t3);
   }
 
   public static void main(String[] args) {
-    Scanner scanner_obj = new Scanner(System.in);
+    boolean files_given = false;
+    if (args.length > 0) {
+      files_given = true;
+    }
+    for (int i = 0; i < args.length; i++) {
+      File file = new File(args[i]);
+
+      if (!file.exists()) {
+        System.out.println("WARNING: " + args[i] + " not found.");
+        args[i] = null;
+      }
+    }
+
+    Scanner scanner = new Scanner(System.in);
 
     System.out.println("Enter the start time:");
-    int t0 = scanner_obj.nextInt();
-    scanner_obj.nextLine();
+    int t0 = scanner.nextInt();
+    scanner.nextLine();
 
     System.out.println("Enter the end time:");
-    int t1 = scanner_obj.nextInt();
-    scanner_obj.nextLine();
-    int potential_zombies = getVisitors(t0, t1);
-    
+    int t1 = scanner.nextInt();
+    scanner.nextLine();
+
+    int potential_zombies = 0;
+    if (files_given) {
+      for (int i = 0; i < args.length; i++) {
+        if (args[i] != null) {
+          try {
+            File myObj = new File(args[i]);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+              String data = myReader.nextLine();
+              String[] vals = data.split(" ");
+              boolean overlaps = overlappingDayAndNightPeriods(t0, t1, Integer.parseInt(vals[1]), Integer.parseInt(vals[2]));
+              potential_zombies += overlaps ? 1 : 0;
+              if (overlaps) {
+                System.out.print(vals[0]);
+                System.out.println(" needs to be quarantined.");
+              }
+            }
+            myReader.close();
+          } catch (FileNotFoundException e) {
+            System.out.println("WARNING: " + args[i] + " not found.");
+          }
+        }
+      }
+    } else {
+      potential_zombies = getVisitors(t0, t1);
+    }
+
     System.out.println("Number of potential zombies: " + potential_zombies);
   }
 }
