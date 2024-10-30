@@ -26,12 +26,10 @@ public class ZombieCatcher {
 
       boolean overlaps = overlappingPeriods(t0, t1, arival_t, departure_t);
       if (overlaps) {
-        System.out.print(name);
-        System.out.println(" needs to be quarantined.");
+        System.out.println(name + " needs to be quarantined.");
         quarantine_count++;
       } else {
-        System.out.print(name);
-        System.out.println(" does not need to be quarantined.");
+        System.out.println(name + " does not need to be quarantined.");
       }
     }
     return quarantine_count;
@@ -113,8 +111,7 @@ public class ZombieCatcher {
               boolean overlaps = overlappingDayAndNightPeriods(t0, t1, Integer.parseInt(vals[1]), Integer.parseInt(vals[2]));
               potential_zombies += overlaps ? 1 : 0;
               if (overlaps) {
-                System.out.print(vals[0]);
-                System.out.println(" needs to be quarantined.");
+                System.out.println(vals[0] + " needs to be quarantined.");
               }
             }
             myReader.close();
