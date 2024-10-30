@@ -2,6 +2,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+
+class Visitor {
+  private boolean valid_data;
+  private String name;
+  private int t0;
+  private int t1;
+
+  public Visitor(String name, int t0, int t1, boolean valid_data) {
+    this.name = name;
+    this.t0 = t0;
+    this.t1 = t1;
+    this.valid_data = valid_data;
+  }
+
+  public String getName() { return name; }
+  public int getT0() { return t0; }
+  public int getT1() { return t1; }
+  public boolean isValidData() { return valid_data; }
+
+  public void setName(String name) { this.name = name; }
+  public void setT0(int t0) { this.t0 = t0; }
+  public void setT1(int t1) { this.t1 = t1; }
+  public void setValidData(boolean valid_data) { this.valid_data = valid_data; }
+
+  @Override
+  public String toString() {
+    return "Visitor{" +
+    "name='" + name + '\'' +
+    ", t0=" + t0 +
+    ", t1=" + t1 +
+    ", valid_data=" + valid_data +
+    '}';
+  }
+}
+
 public class ZombieCatcher {
   // Ask the user to input num of visitors and their times,
   // Check whichone needs to be quarantined
@@ -66,6 +101,27 @@ public class ZombieCatcher {
     return overlappingPeriods(t0, t1, t2, t3);
   }
 
+  public static Visitor validateFileLine(String line) {
+    String[] vals = line.split(" ");
+    boolean valid_data = true;
+    String name = "";
+    int f_t0 = 0;
+    int f_t1 = 0;
+    if (vals.length != 3) {
+      valid_data = false;
+    } else {
+      try {
+        name = vals[0];
+        f_t0 = Integer.parseInt(vals[1]);
+        f_t1 = Integer.parseInt(vals[2]);
+      } catch (Exception e) {
+        valid_data =  false;
+      }
+    }
+    Visitor visitor = new Visitor(name, f_t0, f_t1, valid_data);
+    return visitor;
+  }
+
   public static void main(String[] args) {
     // If files are specified get the visitors data from the files
     // Otherwise get it from user's input
@@ -107,11 +163,19 @@ public class ZombieCatcher {
               // Proper data should provide the data in the following data
               // <name> <start_time> <end_time>
               // Eg Balaji 18 19
-              String[] vals = data.split(" ");
-              boolean overlaps = overlappingDayAndNightPeriods(t0, t1, Integer.parseInt(vals[1]), Integer.parseInt(vals[2]));
-              potential_zombies += overlaps ? 1 : 0;
-              if (overlaps) {
-                System.out.println(vals[0] + " needs to be quarantined.");
+
+              // Try to create a visitor object
+              // If data cannot be extracted properly mark it as not valid
+              Visitor visitor = validateFileLine(data);
+
+              if (!visitor.isValidData()) {
+                System.out.println(args[i] + " contians invalid input");
+              } else {
+                boolean overlaps = overlappingDayAndNightPeriods(t0, t1, visitor.getT0(), visitor.getT1());
+                potential_zombies += overlaps ? 1 : 0;
+                if (overlaps) {
+                  System.out.println(visitor.getName() + " needs to be quarantined.");
+                }
               }
             }
             myReader.close();
